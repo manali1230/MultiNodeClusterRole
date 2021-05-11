@@ -1,0 +1,45 @@
+---
+# tasks file for ec2Instance
+
+- name: Multi Node Cluster SG
+  ec2_group:
+    name: k8s-sg
+    description: sg with rule descriptions
+    vpc_id: vpc-939d80fb
+    region: ap-south-1
+    rules:
+      - proto: all
+        ports:
+        - 0
+        cidr_ip: 0.0.0.0/0
+        rule_desc: allow all
+
+- name: Launch Master Node
+  ec2:
+    region: ap-south-1
+    key_name: ELB
+    instance_type: t2.micro
+    image: ami-010aff33ed5991201
+    wait: yes
+    group: k8s-sg
+    count: 1
+    vpc_subnet_id: subnet-73e0da1b
+    instance_tags:
+       os: master
+    assign_public_ip: yes
+
+
+- name: Launch Worker Node
+  ec2:
+    region: ap-south-1
+    key_name: ELB
+    instance_type: t2.micro
+    image: ami-010aff33ed5991201
+    wait: yes
+    group: k8s-sg
+    count: 2
+    vpc_subnet_id: subnet-73e0da1b
+    instance_tags:
+       os: worker
+    assign_public_ip: yes
+

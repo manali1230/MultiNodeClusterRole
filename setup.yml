@@ -1,0 +1,23 @@
+- hosts: localhost
+  tasks:
+    - name: launch ec2 Instance
+      include_role:
+        name: ec2Instance
+
+    - name: "Simulate long running op (15 sec), wait for up to 45 sec, poll every 5 sec"
+      command: /bin/sleep 15
+      async: 45
+      poll: 5
+
+- hosts: tag_os_master
+  tasks:
+    - name: Configure Master Node
+      include_role: 
+        name: Master
+
+- hosts: tag_os_worker
+  tasks:
+    - name: Configure Worker Node
+      include_role:
+        name: Slave
+
